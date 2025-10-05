@@ -93,9 +93,9 @@ export async function GET(req) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ data: products }, { status: 200 });
+    return NextResponse.json({ products }, { status: 200 });
   } catch (e) {
     console.error("[PRODUCT_GET]", e);
-    return NextResponse.json({ message: "Internal error" }, { status: 500 });
+    return NextResponse.json({ message: e.code || e.message }, { status: 400 });
   }
 }
