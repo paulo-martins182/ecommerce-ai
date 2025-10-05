@@ -4,12 +4,9 @@ import { format } from "date-fns"
 import toast from "react-hot-toast"
 import { DeleteIcon } from "lucide-react"
 import { couponDummyData } from "@/assets/assets"
+import api from "@/lib/axios"
 
-export default function AdminCoupons() {
-
-    const [coupons, setCoupons] = useState([])
-
-    const [newCoupon, setNewCoupon] = useState({
+const default_coupon = {
         code: '',
         description: '',
         discount: '',
@@ -17,17 +14,38 @@ export default function AdminCoupons() {
         forMember: false,
         isPublic: false,
         expiresAt: new Date()
-    })
+    }
+
+export default function AdminCoupons() {
+
+
+    const [coupons, setCoupons] = useState([])
+
+    const [newCoupon, setNewCoupon] = useState(default_coupon)
 
     const fetchCoupons = async () => {
-        setCoupons(couponDummyData)
+        try{
+            const { data } = await api.get('/admin/coupon')
+            setCoupons(data.coupon)
+        }catch(e){
+            toast.error('eee1')
+        }
     }
 
     const handleAddCoupon = async (e) => {
-        e.preventDefault()
-        // Logic to add a coupon
-
-
+       e.preventDefault()
+       try{
+            newCoupon.discount = Number(newCoupon.discount)
+            newCoupon.expiresAt = new Date(newCoupon.expiresAt)
+            const {data} = api.post('/admin/coupon', {
+                coupon: newCoupon
+            })
+            await fetchCoupons()
+            toast.success(data.message)
+            setNewCoupon(default_coupon)
+       }catch(e){
+            toast.error('eee2')
+       }
     }
 
     const handleChange = (e) => {
@@ -35,9 +53,17 @@ export default function AdminCoupons() {
     }
 
     const deleteCoupon = async (code) => {
-        // Logic to delete a coupon
+       try{
+        const confirm = window.confirm("Are you sure you want to delete this coupon? ")
+        if(!confirm) return 
 
+        const { data } = await api.delete(`/admin/coupon?code=${code}`)
+        await fetchCoupons()
+        toast.success("Coupon deleted successfully")
 
+       }catch(e){
+            toast.error('eee3')
+        }
     }
 
     useEffect(() => {
