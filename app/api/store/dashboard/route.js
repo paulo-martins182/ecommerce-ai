@@ -22,7 +22,7 @@ export async function GET(req) {
     });
 
     const dashboardData = {
-      rating,
+      ratings: rating,
       totalOrders: orders.length,
       totalEarnings: Math.round(
         orders.reduce((acc, order) => acc + order.total, 0)
@@ -30,7 +30,7 @@ export async function GET(req) {
       totalProducts: products.length,
     };
 
-    return NextResponse.json({ data: dashboardData }, { status: 200 });
+    return NextResponse.json({ dashboardData }, { status: 200 });
   } catch (e) {
     console.error("[DASHBOARD_GET]", e);
     return NextResponse.json({ message: e.code || e.message }, { status: 400 });
