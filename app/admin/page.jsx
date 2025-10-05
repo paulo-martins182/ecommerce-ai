@@ -2,8 +2,10 @@
 import { dummyAdminDashboardData } from "@/assets/assets"
 import Loading from "@/components/Loading"
 import OrdersAreaChart from "@/components/OrdersAreaChart"
+import api from "@/lib/axios"
 import { CircleDollarSignIcon, ShoppingBasketIcon, StoreIcon, TagsIcon } from "lucide-react"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 export default function AdminDashboard() {
 
@@ -26,8 +28,14 @@ export default function AdminDashboard() {
     ]
 
     const fetchDashboardData = async () => {
-        setDashboardData(dummyAdminDashboardData)
-        setLoading(false)
+        try{
+            const {data} = await api.get('/admin/dashboard')
+            setDashboardData(data.dashboardData)
+        }catch(e){
+            toast.error(e?.response?.data?.error || e.message)
+        }finally{
+            setLoading(false)
+        }
     }
 
     useEffect(() => {

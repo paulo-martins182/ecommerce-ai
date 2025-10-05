@@ -8,8 +8,12 @@ const authAdmin = async (userId) => {
        const user = await client.users.getUser(userId)
 
 
-       return 
+       return process.env.ADMIN_EMAIL.split(',').includes(user.emailAddresses[0].emailAddress)
     }catch(e){
-
+        console.log(error)
+        return false
     }
 }
+
+
+export default authAdmin
