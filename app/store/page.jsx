@@ -48,7 +48,6 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       const { data } = await api.get("/store/dashboard");
-      console.log("DATA", data.dashboardData);
       setDashboardData(data.dashboardData);
     } catch (e) {
       toast.error(e?.response?.data?.error || e.message);
