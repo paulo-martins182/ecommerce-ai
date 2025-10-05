@@ -32,9 +32,52 @@ export default function StoreAddProduct() {
   const [images, setImages] = useState(defaultImages);
   const [productInfo, setProductInfo] = useState(defaultProductInfo);
   const [loading, setLoading] = useState(false);
+  const [aiUsed, setAiUsed] = useState(false);
 
   const onChangeHandler = (e) => {
     setProductInfo({ ...productInfo, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = async (key, file) => {
+    setImages((prev) => ({ ...prev, [key]: file }));
+
+    if (key === "1" && file && !aiUsed) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const base64String = reader.result.split(",")[1];
+        const mimeType = file.type;
+
+        try {
+          await toast.promise(
+            api.post("/store/ai", { base64Image: base64String, mimeType }),
+            {
+              loading: "Analyzing image with AI",
+              success: (res) => {
+                const data = res.data;
+                if (data.name && data.description) {
+                  setProductInfo((prev) => ({
+                    ...prev,
+                    name: data.name,
+                    description: data.description,
+                  }));
+
+                  setAiUsed(true);
+
+                  return "Ai Filled product info!!";
+                }
+                return "Ai could not analyze the image";
+              },
+              error: (e) => {
+                e?.response?.data?.message || e.message;
+              },
+            }
+          );
+        } catch (e) {
+          console.log(e);
+        }
+      };
+    }
   };
 
   const onSubmitHandler = async (e) => {
@@ -94,9 +137,7 @@ export default function StoreAddProduct() {
               type="file"
               accept="image/*"
               id={`images${key}`}
-              onChange={(e) =>
-                setImages({ ...images, [key]: e.target.files[0] })
-              }
+              onChange={(e) => handleImageUpload(key, e.target.files[0])}
               hidden
             />
           </label>
