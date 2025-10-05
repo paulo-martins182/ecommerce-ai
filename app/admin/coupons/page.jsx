@@ -28,7 +28,7 @@ export default function AdminCoupons() {
             const { data } = await api.get('/admin/coupon')
             setCoupons(data.coupon)
         }catch(e){
-            toast.error('eee1')
+             toast.error(e?.response?.data?.error || e.message)
         }
     }
 
@@ -37,14 +37,14 @@ export default function AdminCoupons() {
        try{
             newCoupon.discount = Number(newCoupon.discount)
             newCoupon.expiresAt = new Date(newCoupon.expiresAt)
-            const {data} = api.post('/admin/coupon', {
+            const { data } = await api.post('/admin/coupon', {
                 coupon: newCoupon
             })
             await fetchCoupons()
             toast.success(data.message)
-            setNewCoupon(default_coupon)
        }catch(e){
-            toast.error('eee2')
+        console.log('[ERROR_CREATE_CUPON]',e)
+            toast.error(e?.response?.data?.error || e.message)
        }
     }
 
@@ -62,7 +62,7 @@ export default function AdminCoupons() {
         toast.success("Coupon deleted successfully")
 
        }catch(e){
-            toast.error('eee3')
+             toast.error(e?.response?.data?.error || e.message)
         }
     }
 
