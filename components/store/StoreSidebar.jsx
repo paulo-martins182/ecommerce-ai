@@ -29,7 +29,7 @@ const StoreSidebar = ({ storeInfo }) => {
       <div className="flex flex-col gap-3 justify-center items-center pt-8 max-sm:hidden">
         <Image
           className="w-14 h-14 rounded-full shadow-md"
-          src={assets.cb_logo || storeInfo?.logo}
+          src={storeInfo?.logo || assets.cb_logo}
           alt=""
           width={80}
           height={80}

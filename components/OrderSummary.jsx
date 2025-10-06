@@ -59,8 +59,6 @@ const OrderSummary = ({ totalPrice, items }) => {
       const { data } = await api.post("/orders", orderData);
 
       if (paymentMethod === "STRIPE") {
-        console.log("method", paymentMethod);
-        console.log("method", data);
         router.replace(data.session.url);
       } else {
         toast.success(data.message);
